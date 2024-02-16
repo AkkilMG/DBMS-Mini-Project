@@ -5,7 +5,6 @@
  */
 
 import express from "express";
-import { verifyToken } from "../workers/auth";
 
 
 const router = express.Router();

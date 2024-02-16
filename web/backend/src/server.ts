@@ -18,23 +18,13 @@ require('dotenv').config();
 const app = express();
 
 app.use(express.json())
-
-app.use(cors({
-    origin: '*',
-    methods: 'GET, HEAD, PUT, PATCH, POST, DELETE',
-    credentials: true,
-    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'Access-Control-Allow-Origin', 'Access-Control-Allow-Methods', 'Access-Control-Allow-Headers'],
-}));
-
+app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, HEAD, PUT, PATCH, POST, DELETE'); 
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Origin, Access-Control-Allow-Methods, Access-Control-Allow-Headers'); 
+    console.log(`${new Date().toString()}: ${req.method}=> ${req.originalUrl}`);
     next();
 });
-
-app.set('trust proxy', true);
 app.use(bodyParser.json());
+app.set('trust proxy', true);
 
 // var server;
 // if (process.env.PRODUCTION==="true") {
@@ -46,6 +36,7 @@ app.use(bodyParser.json());
 // } else {
 //     server = http.createServer(app);
 // }
+
 var server = http.createServer(app);
 
 app.get("/", async(req, res) => {
@@ -55,6 +46,9 @@ app.get("/", async(req, res) => {
 
 // User Interface API routes
 app.use("/api/app", App)
+
+// User Interface API routes
+app.use("/api/auth", App)
 
 
 server.listen(7000, () => console.log(`Server running at http://localhost:7000`));

@@ -5,12 +5,13 @@
  */
 
 import mysql from 'mysql';
+import { User } from '../workers/model';
 
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'your_username',
-  password: 'your_password',
-  database: 'your_database_name'
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DATABASE
 });
 
 db.connect((err) => {
@@ -21,14 +22,24 @@ db.connect((err) => {
   console.log('Connected to database');
 });
 
-export const getAllUsers = async () => {
-  return new Promise((resolve, reject) => {
-    db.query('SELECT * FROM users', (err, results) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      resolve(results);
+/* ------- User Registration and Authentication ------- */
+
+// Signup
+export const Signup = async (data: User) => {
+  try {
+    new Promise((resolve, reject) => {
+      const query = 'INSERT INTO user SET ?';
+      db.query(query, data, (error, results) => {
+          if (error) {
+            console.log(`database>Signup>Query: ${error}`);
+            return { success: false, message: "Something went wrong!" }
+          }
+          // resolve(data);
+          return { success: true }
+      });
     });
-  });
+  } catch (e) {
+    console.log(`database>Signup>try: ${e.message}`);
+    return { success: false, message: "Something went wrong!" }
+  }
 };

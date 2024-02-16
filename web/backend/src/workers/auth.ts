@@ -17,26 +17,6 @@ export const verifyToken = async (req: Request, res: Response, next: () => void)
     }
 };
 
-// export const adminVerifyToken = async (req: Request, res: Response, next: () => void) => {
-//     const token = req.header('Authorization')?.split(' ')[1];
-//     if (!token) {
-//         return res.status(401).json({ success: false, message: 'Authentication failed' });
-//     }
-//     try {
-//         let decoded = jwt.verify(token, process.env.KEY) as { id: string };
-//         let rypt = await decrypt(decoded.id);
-//         if (await isAdmin(rypt)) {
-//             req.body.id = rypt;
-//             req.body.adminRole = Number(await AdminRole(rypt));
-//             next();
-//         } else {
-//             return res.status(401).json({ success: false, message: 'Not an admin.' });
-//         }
-//     } catch (error) {
-//         console.log(error);
-//         return res.status(401).json({ success: false, message: 'Authentication failed. Due to some internal issue.' });
-//     }
-// }
 
 export const createToken = async (id: string) => {
     try { 
