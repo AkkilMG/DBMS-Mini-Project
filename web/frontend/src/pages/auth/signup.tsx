@@ -1,7 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { ScreenLoading } from '../../components/common/lottie';
 
 export const Signup = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer); // Clear the timer when the component unmounts
+  }, []);
+  console.log(loading);
+
   return (
+    <>
+    {loading && (
+      <ScreenLoading />
+    )}
     <main className="flex flex-col">
       <header className="fixed top-0 z-50 hidden w-full text-gray-100 transition-all duration-300 ease-in-out lg:block lg:w-1/3 body-font">
         <div className="container flex flex-row flex-wrap items-center p-5 mx-auto">
@@ -11,7 +27,7 @@ export const Signup = () => {
       <div className="flex flex-row flex-grow">
         <div className="hidden lg:block lg:w-1/3">
           <video className="object-cover w-full h-screen no-drag" autoPlay muted loop>
-            <source src="/assets/police.mp4" type="video/mp4" /> {/* https://cdn.dribbble.com/uploads/48226/original/b8bd4e4273cceae2889d9d259b04f732.mp4?1689028949 */}
+            <source onCanPlayThrough={() => setLoading(false)} src="/assets/police.mp4" type="video/mp4" /> {/* https://cdn.dribbble.com/uploads/48226/original/b8bd4e4273cceae2889d9d259b04f732.mp4?1689028949 */}
             Your browser does not support the video tag.
           </video>
         </div>
@@ -65,5 +81,6 @@ export const Signup = () => {
         </div>
       </div>
     </main>
+    </>
   );
 };
