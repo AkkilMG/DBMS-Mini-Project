@@ -11,6 +11,7 @@ import http from 'http';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { App } from "./router/app_api";
+import { SelectData } from './database/database';
 
 require('dotenv').config();
 
@@ -41,6 +42,13 @@ var server = http.createServer(app);
 
 app.get("/", async(req, res) => {
     res.status(200).json({success: true})
+    return
+})
+
+// test
+app.get("/test", async(req, res) => {
+    console.log(await SelectData());
+    res.status(200).json({msg: "Hi"})
     return
 })
 
