@@ -1,3 +1,8 @@
+/**
+ * @author: @AkkilMG
+ * @description: DBMS Project - Police Connect
+ */
+
 import React, { useState, useEffect } from 'react';
 import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';

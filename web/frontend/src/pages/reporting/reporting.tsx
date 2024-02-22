@@ -1,3 +1,8 @@
+/**
+ * @author: @AkkilMG
+ * @description: DBMS Project - Police Connect
+ */
+
 import React, { useEffect, useState } from 'react';
 import { StepTwo } from './steps/StepTwo';
 import { StepOne } from './steps/StepOne';
@@ -59,7 +64,7 @@ export const Reporting = () => {
                             <div className="step">
                                 {i < currentStep || complete ? <TiTick size={24} /> : i + 1}
                             </div>
-                            <p className="leading-tight text-white font-sans font-semibold">{step}</p>
+                            <p className="font-sans font-semibold leading-tight text-white">{step}</p>
                         </div>
                         ))}
                     </div>
@@ -72,7 +77,7 @@ export const Reporting = () => {
         </div>
         <div className='flex flex-auto'>
             {!complete && (
-                <div className="relative w-1/5 flex justify-between px-10 mb-10">
+                <div className="relative flex justify-between w-1/5 px-10 mb-10">
                     {currentStep > 0 && (
                         <button onClick={prevStep} className="absolute bottom-5 focus:shadow-outline h-14 w-full max-w-[calc(50%-0.5rem)] rounded-3xl bg-[#0D0C22] px-4 py-2 font-sans font-bold text-white hover:bg-gray-800 focus:outline-none">Back</button>
                     )}
@@ -90,7 +95,7 @@ export const Reporting = () => {
                 )}
             </div>
             {!complete && (
-                <div className="relative w-1/5 flex justify-between px-10 mb-10">
+                <div className="relative flex justify-between w-1/5 px-10 mb-10">
                     {currentStep < steps.length - 1 ? (
                         <button onClick={nextStep} className="absolute bottom-5 focus:shadow-outline h-14 w-full max-w-[calc(50%-0.5rem)] rounded-3xl bg-[#0D0C22] px-4 py-2 font-sans font-bold text-white hover:bg-gray-800 focus:outline-none">Next</button>
                     ) : (

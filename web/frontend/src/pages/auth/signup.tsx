@@ -1,3 +1,8 @@
+/**
+ * @author: @AkkilMG
+ * @description: DBMS Project - Police Connect
+ */
+
 import React, { useEffect, useState } from 'react';
 import { ScreenLoading } from '../../components/common/lottie';
 
@@ -74,7 +79,7 @@ export const Signup = () => {
               </div>
               <p className="mt-4 text-sm text-center text-gray-600">
                 Already have an account?<span> </span>
-                <a href="/" className="font-sans text-sm text-gray-600 underline cursor-pointer">Sign in </a>
+                <a href="/signin" className="font-sans text-sm text-gray-600 underline cursor-pointer">Sign in </a>
               </p>
             </form>
           </div>

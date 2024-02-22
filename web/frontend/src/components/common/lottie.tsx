@@ -1,3 +1,8 @@
+/**
+ * @author: @AkkilMG
+ * @description: DBMS Project - Police Connect
+ */
+
 import React, { useState } from 'react';
 import Lottie from 'react-lottie';
 import copBikeData from '../../assets/cop_bike.json'; 

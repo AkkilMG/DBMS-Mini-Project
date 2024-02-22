@@ -1,4 +1,11 @@
+/**
+ * @author: @AkkilMG
+ * @description: DBMS Project - Police Connect
+ */
+
+
 import React, { useState } from 'react';
+
 
 interface DropdownProps {
     options: string[];

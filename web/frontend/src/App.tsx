@@ -8,6 +8,7 @@ import { Header } from './components/common/header';
 import { Footer } from './components/common/footer';
 import { Reporting } from './pages/reporting/Reporting';
 import { ScreenLoading } from './components/common/lottie';
+import { ForgotForm } from './pages/auth/ForgotForm';
 
 
 const Routing= () => {
@@ -15,11 +16,9 @@ const Routing= () => {
   // console.log(path);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    // Simulate loading time
     const timeout = setTimeout(() => {
       setLoading(false);
-    }, 5000); // 5000 milliseconds = 5 seconds
-
+    }, 5000);
     return () => clearTimeout(timeout);
   }, []);
 
@@ -47,22 +46,12 @@ const Routing= () => {
 export const App = () => {
   return (
     <Routes>
-      {/* <Route path="/report" element={<Reporting />} /> */}
       <Route path="/report" element={<Reporting />} />
       <Route path="/signin" element={<Signin />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/forgot" element={<ForgotForm />} />
       <Route path="/" element={<Routing />} />
       <Route path="/:path" element={<Routing />} />
     </Routes>
-    // <div>
-    //   <Routes>
-    //     <Header />
-    //     <Route path="/" element={<Home />} />
-    //     <Route element={<NotFound />} />
-    //     <Footer />
-    //   </div>
-    // </Routes>
-    // </div>
-    
   );
 };
