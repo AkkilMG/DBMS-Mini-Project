@@ -63,6 +63,7 @@ CREATE TABLE EVIDENCE (
     CaseDesc VARCHAR(400),
     EvidenceDesc VARCHAR(400) NOT NULL,
     EvidenceDocs VARCHAR(50),
+    EvidenceLoc VARCHAR(20),
     Submitted DATE,
 	Anonymity BOOLEAN NOT NULL,
     PRIMARY KEY(EvidenceID),

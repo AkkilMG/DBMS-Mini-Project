@@ -5,7 +5,7 @@
 
 import React from 'react';
 
-export const Terms = () => {
+export const DashboardSettings = () => {
   return (
     <></>
   );

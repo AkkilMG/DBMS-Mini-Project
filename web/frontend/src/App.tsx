@@ -9,6 +9,12 @@ import { Footer } from './components/common/footer';
 import { Reporting } from './pages/reporting/Reporting';
 import { ScreenLoading } from './components/common/lottie';
 import { ForgotForm } from './pages/auth/ForgotForm';
+import Dashboard from './pages/dashboard/dashboard';
+import { Challan } from './pages/challan/challan';
+import { Evidence } from './pages/evidence/Evidence';
+import { TrackCase } from './pages/track-case/track-case';
+import { Privacy } from './pages/policy/privacy';
+import { Terms } from './pages/policy/terms';
 
 
 const Routing= () => {
@@ -46,11 +52,23 @@ const Routing= () => {
 export const App = () => {
   return (
     <Routes>
-      <Route path="/report" element={<Reporting />} />
+      {/* Authentication */}
       <Route path="/signin" element={<Signin />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot" element={<ForgotForm />} />
-      <Route path="/" element={<Routing />} />
+      {/* Pages */}
+      <Route path="/report" element={<Reporting />} />
+      <Route path="/evidence" element={<Evidence />} />
+      <Route path="/track-case" element={<TrackCase />} />
+      <Route path="/challan" element={<Challan />} />
+      {/* Policy */}
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
+      {/* Dashboard */}
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/dashboard/:path" element={<Dashboard />} />
+      {/* Other routing */}
+      <Route path="/" element={<Dashboard />} />
       <Route path="/:path" element={<Routing />} />
     </Routes>
   );

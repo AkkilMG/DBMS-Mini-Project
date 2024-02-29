@@ -10,7 +10,7 @@ export const StepOne: React.FC<Props>  = ({formData, setFormData}) => {
     var crimeType = ["Robbery", "Homicide", "Assault", "Domestic Violence", "Kidnapping", "Child Labour", "Harassment", "Murder", "Assault", "Stalking", "Riot", "Fraud", "Cyber Crime", "Other"];
     return (
         <div className="w-full max-w-md">
-            <h2 className="flex flex-row mb-6 text-2xl font-bold">Basic information for reporting</h2>
+            <h2 className="flex flex-row mb-6 text-2xl font-bold">Details on Case</h2>
             <form>
                 <div className="mb-6">
                     <span className="flex items-center justify-between mb-2 font-sans font-bold text-gray-700 text-sl">

@@ -6,7 +6,6 @@
 import React, { useEffect, useState } from 'react';
 import { StepTwo } from './steps/StepTwo';
 import { StepOne } from './steps/StepOne';
-import { StepThree } from './steps/StepThree';
 import { ScreenLoading } from '../../components/common/lottie';
 import { TiTick } from "react-icons/ti";
 import { Completed } from './steps/Completed';
@@ -16,7 +15,7 @@ export const Evidence = () => {
     const [complete, setComplete] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState({});
-    const steps = ["Basic Info on Incident", "Details on Incident", "Evidence of the Incident"];
+    const steps = ["Details on Case", "Evidence related to case"];
     useEffect(() => {
         const timer = setTimeout(() => {
         setLoading(false);
@@ -39,7 +38,7 @@ export const Evidence = () => {
         setComplete(true);
         // Submit your formData
     };
-    const StepComponent = steps[currentStep];
+    // const StepComponent = steps[currentStep];
     console.log(currentStep)
     return complete ? (
      <Completed />
@@ -87,11 +86,7 @@ export const Evidence = () => {
                 {currentStep === 0 ? (
                     <StepOne formData={formData} setFormData={setFormData} />
                 ) : (
-                    currentStep === 1 ? (
-                        <StepTwo formData={formData} setFormData={setFormData} />
-                    ) : (
-                        <StepThree formData={formData} setFormData={setFormData} />
-                    )
+                    <StepTwo formData={formData} setFormData={setFormData} />
                 )}
             </div>
             {!complete && (
