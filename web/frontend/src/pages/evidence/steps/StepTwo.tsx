@@ -9,22 +9,31 @@ import axios from 'axios';
 
 export const StepTwo: React.FC<Props>  = ({formData, setFormData}) => {
     const handleUpload = async (e: any) => {
-        const formDataToSend = new FormData();
-        formDataToSend.append('file', e.target.files[0]);
+        // const formDataToSend = new FormData();
+        // formDataToSend.append('file', e.target.files[0]);
         try {
-            const response = await axios.post(
-                "https://cors-anywhere.herokuapp.com/https://picdb.izaries.workers.dev/upload",
-                formDataToSend,
-                {
-                    headers: {
-                        'X-File-Type': e.target.files[0].type.split('/')[1],
-                        'Access-Control-Allow-Origin': '*',
-                        'Content-Type': 'multipart/form-data' // Set content type to multipart/form-data for file upload
-                    }
+            // const response = await axios.post(
+            //     "https://cors-anywhere.herokuapp.com/https://picdb.izaries.workers.dev/upload",
+            //     formDataToSend,
+            //     {
+            //         headers: {
+            //             'X-File-Type': e.target.files[0].type.split('/')[1],
+            //             'Access-Control-Allow-Origin': '*',
+            //             'Content-Type': 'multipart/form-data' // Set content type to multipart/form-data for file upload
+            //         }
+            //     }
+            // );
+            const formData = new FormData();
+            formData.append('file', e.target.files[0], e.target.files[0].name);
+            const config = {
+                headers: {
+                // accept: 'application/json',
+                'Content-Type': 'multipart/form-data',
                 }
-            );
-            if (response.status === 200 && response.data.download) {
-                setFormData({...formData, EvidenceDocs: response.data.download});
+            };
+            var response = await axios.post('https://picdb-api.onrender.com/api/v1/upload', formData, config)
+            if (response.status === 200 && response.data.success && response.data.durl) {
+                setFormData({...formData, EvidenceDocs: response.data.durl});
             }
         } catch (error) {
             console.error('Error:', error);

@@ -1,6 +1,6 @@
 /**
  * @name: Akkil M G
- * @description: App router
+ * @description: Auth router
  * @copyright: AkkilMG (c) 2022
  */
 

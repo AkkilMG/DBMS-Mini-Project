@@ -4,61 +4,60 @@
  */
 
 import React from 'react';
-import { Dropdown } from "../../../components/inputs/dropdown";
 import axios from 'axios';
 
 export const StepThree: React.FC<Props>  = ({formData, setFormData}) => {
-    // var anonymous = ["Yes", "No"];
     const eviddoc = async (e: any) => {
         const formDataToSend = new FormData();
         formDataToSend.append('file', e.target.files[0]);
         try {
-            const response = await axios.post(
-                "https://cors-anywhere.herokuapp.com/https://picdb.izaries.workers.dev/upload",
-                formDataToSend,
-                {
-                    headers: {
-                        'X-File-Type': e.target.files[0].type.split('/')[1],
-                        'Access-Control-Allow-Origin': '*',
-                        'Content-Type': 'multipart/form-data' // Set content type to multipart/form-data for file upload
-                    }
+            const formDataCopy = new FormData();
+            formDataCopy.append('file', e.target.files[0], e.target.files[0].name);
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
                 }
-            );
-            console.log(response);
-            if (response.status === 200 && response.data.download) {
-                setFormData({...formData, EvidenceDocs: response.data.download});
+            };
+            const response = await axios.post('https://picdb-api.onrender.com/api/v1/upload', formDataCopy, config);
+            if (response.status === 200 && response.data.success && response.data.durl) {
+                setFormData((formData: any) => ({
+                    ...formData,
+                    EvidenceDoc: response.data.durl
+                }));
             }
         } catch (error) {
             console.error('Error:', error);
         }
-    }
-    const susdoc = async (e: any) => {
-        const formDataToSend = new FormData();
-        formDataToSend.append('file', e.target.files[0]);
-        try {
-            const response = await axios.post(
-                "https://cors-anywhere.herokuapp.com/https://picdb.izaries.workers.dev/upload",
-                formDataToSend,
-                {
-                    headers: {
-                        'X-File-Type': e.target.files[0].type.split('/')[1],
-                        'Access-Control-Allow-Origin': '*',
-                        'Content-Type': 'multipart/form-data' // Set content type to multipart/form-data for file upload
-                    }
-                }
-            );
-            console.log(response);
-            if (response.status === 200 && response.data.download) {
-                setFormData({...formData, SuspeciousDocs: response.data.download});
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
+    };
 
-    const handleAnonymity = (e: any) => {
-        setFormData({...formData, Anonymity: e.target.checked})
-    }
+    const susdoc = async (e: any) => {
+        try {
+            const formDataCopy = new FormData();
+            formDataCopy.append('file', e.target.files[0], e.target.files[0].name);
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            };
+            const response = await axios.post('https://picdb-api.onrender.com/api/v1/upload', formDataCopy, config);
+            if (response.status === 200 && response.data.success && response.data.durl) {
+                setFormData((formData: any) => ({
+                    ...formData,
+                    SuspeciousDocs: response.data.durl
+                }));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const handleAnonymity = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData((formData: any) => ({
+            ...formData,
+            Anonymity: e.target.checked
+        }));
+    };
+
 
     return (
     <div className="w-full max-w-md">
@@ -66,11 +65,19 @@ export const StepThree: React.FC<Props>  = ({formData, setFormData}) => {
         <form>
             <div className="mb-4">
                 <label className="block mb-2 font-bold text-gray-700 text-sl"> May I have the evidence of the incident? </label>
-                <input required value={formData.EvidenceDocs} onChange={eviddoc} className="w-full px-3 py-2 leading-tight text-gray-700 border rounded-lg shadow appearance-none h-14 focus:border-indigo-500 focus:shadow-lg focus:outline-none focus:ring-2" id="EvidenceDocs" type="file" />
+                {(formData.EvidenceDoc && formData.EvidenceDoc!=="" && formData.EvidenceDoc!==null)? (
+                    <input readOnly value={formData.EvidenceDoc} className="w-full px-3 py-2 leading-tight text-gray-700 border rounded-lg shadow appearance-none h-14 focus:border-indigo-500 focus:shadow-lg focus:outline-none focus:ring-2" id="EvidenceDocs" type="text" />
+                    ) :(
+                    <input required onChange={eviddoc} className="w-full px-3 py-2 leading-tight text-gray-700 border rounded-lg shadow appearance-none h-14 focus:border-indigo-500 focus:shadow-lg focus:outline-none focus:ring-2" id="EvidenceDocs" type="file" />
+                )}
             </div>
             <div className="mb-4">
                 <label className="block mb-2 font-bold text-gray-700 text-sl"> May I know if you have an suspecious incident? </label>
-                <input required value={formData.SuspeciousDocs} onChange={susdoc} className="w-full px-3 py-2 leading-tight text-gray-700 border rounded-lg shadow appearance-none h-14 focus:border-indigo-500 focus:shadow-lg focus:outline-none focus:ring-2" id="SuspeciousDocs" type="file" />
+                {(formData.SuspeciousDocs && formData.SuspeciousDocs!=="" && formData.SuspeciousDocs!==null)? (
+                    <input readOnly value={formData.SuspeciousDocs} className="w-full px-3 py-2 leading-tight text-gray-700 border rounded-lg shadow appearance-none h-14 focus:border-indigo-500 focus:shadow-lg focus:outline-none focus:ring-2" id="SuspeciousDocs" type="text" />
+                    ) :(
+                    <input required onChange={susdoc} className="w-full px-3 py-2 leading-tight text-gray-700 border rounded-lg shadow appearance-none h-14 focus:border-indigo-500 focus:shadow-lg focus:outline-none focus:ring-2" id="SuspeciousDocs" type="file" />
+                )}
             </div>
             <div className="mb-4">
                 <label className="block mb-2 font-bold text-gray-700 text-sl"> May I know if you have an suspecious incident? </label>

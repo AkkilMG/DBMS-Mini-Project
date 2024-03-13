@@ -22,7 +22,7 @@ export const Reporting = () => {
     const token = localStorage.getItem('token');
     const [formData, setFormData] = useState<any>({
         CrimeType: '',
-        IncidentDate: null,
+        IncidentDate: '',
         IncidentLoc: '',
         EvidenceDoc: '',
         EvidenceDesc: '' ,
@@ -51,36 +51,35 @@ export const Reporting = () => {
     
     const handleSubmit = async () => {
         try {
-            formData.IncidentLoc = formData.location.toString();
+            setFormData((formData: any) => ({...formData, IncidentLoc: formData.location.toString()}))
         } catch (e) {}
         console.log(formData);
-        // try {
-        //     if (formData.CrimeType === '' || formData.IncidentDate === null || formData.IncidentLoc === '' || formData.EvidenceDoc === '' || formData.EvidenceDesc === '' || formData.SuspeciousDocs === '' || formData.SuspeciousDesc === '' || formData.Anonymity === '') {
-        //       setError('Please fill in all fields.');
-        //     } else {
-        //       const response = await axios.post(
-        //         'http://localhost:7000/api/police/case-reporting', formData, {
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 'Authorization': `Bearer ${token}`
-        //             }
-        //         }
-        //       );
-        //       console.log(response);
-        //       if (response.status === 200 && response.data.success) {
-        //         setComplete(true);
-        //       } else if (response.status === 200 && !response.data.success) {
-        //         setError(response.data.message);
-        //       } else {
-        //         setError("Unable to contact the server.")
-        //       }
-        //     }
-        // } catch (error) {
-        //     setError("Unable to contact the server.")
-        // }
+        try {
+            if (formData.CrimeType === '' || formData.IncidentDate === '' || formData.IncidentLoc === '' || formData.EvidenceDoc === '' || formData.EvidenceDesc === '' || formData.SuspeciousDocs === '' || formData.SuspeciousDesc === '') {
+              setError('Please fill in all fields.');
+            } else {
+              const response = await axios.post(
+                'http://localhost:7000/api/police/reporting', formData, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+              );
+              console.log(response);
+              if (response.status === 200 && response.data.success) {
+                setComplete(true);
+              } else if (response.status === 200 && !response.data.success) {
+                setError(response.data.message);
+              } else {
+                setError("Unable to contact the server.")
+              }
+            }
+        } catch (error) {
+            setError("Unable to contact the server.")
+        }
     };
     const StepComponent = steps[currentStep];
-    console.log(currentStep)
     return complete ? (
      <Completed />
     ) : (
@@ -149,7 +148,7 @@ export const Reporting = () => {
                     {currentStep < steps.length - 1 ? (
                         <button onClick={nextStep} className="absolute bottom-5 focus:shadow-outline h-14 w-full max-w-[calc(50%-0.5rem)] rounded-3xl bg-[#0D0C22] px-4 py-2 font-sans font-bold text-white hover:bg-gray-800 focus:outline-none">Next</button>
                     ) : (
-                        <button type='submit' onClick={handleSubmit} className="absolute bottom-5 focus:shadow-outline h-14 w-full max-w-[calc(50%-0.5rem)] rounded-3xl bg-[#0D0C22] px-4 py-2 font-sans font-bold text-white hover:bg-gray-800 focus:outline-none">Submit</button>
+                        <button onClick={handleSubmit} className="absolute bottom-5 focus:shadow-outline h-14 w-full max-w-[calc(50%-0.5rem)] rounded-3xl bg-[#0D0C22] px-4 py-2 font-sans font-bold text-white hover:bg-gray-800 focus:outline-none">Submit</button>
                     )}
                 </div>
             )}

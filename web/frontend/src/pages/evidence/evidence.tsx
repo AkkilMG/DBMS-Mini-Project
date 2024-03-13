@@ -48,7 +48,7 @@ export const Evidence = () => {
     const handleSubmit = async () => {
         console.log(formData);
         try {
-            formData.EvidenceLoc = formData.location.toString();
+            setFormData({...formData, EvidenceLoc: formData.location.toString()})
         } catch (e) {}
         try {
             if (formData.CaseID === '' || formData.CaseDesc === '' || formData.EvidenceDesc === '' || formData.EvidenceDocs === '' || formData.EvidenceLoc === undefined) {
@@ -139,7 +139,7 @@ export const Evidence = () => {
                     {currentStep < steps.length - 1 ? (
                         <button onClick={nextStep} className="absolute bottom-5 focus:shadow-outline h-14 w-full max-w-[calc(50%-0.5rem)] rounded-3xl bg-[#0D0C22] px-4 py-2 font-sans font-bold text-white hover:bg-gray-800 focus:outline-none">Next</button>
                     ) : (
-                        <button type='submit' onClick={handleSubmit} className="absolute bottom-5 focus:shadow-outline h-14 w-full max-w-[calc(50%-0.5rem)] rounded-3xl bg-[#0D0C22] px-4 py-2 font-sans font-bold text-white hover:bg-gray-800 focus:outline-none">Submit</button>
+                        <button onClick={handleSubmit} className="absolute bottom-5 focus:shadow-outline h-14 w-full max-w-[calc(50%-0.5rem)] rounded-3xl bg-[#0D0C22] px-4 py-2 font-sans font-bold text-white hover:bg-gray-800 focus:outline-none">Submit</button>
                     )}
                 </div>
             )}

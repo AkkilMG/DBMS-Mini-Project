@@ -12,6 +12,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { Police } from "./router/police_api";
 import { Auth } from './router/auth_api';
+import { Notify } from './router/notification';
 
 require('dotenv').config();
 
@@ -53,5 +54,8 @@ app.use("/api/auth", Auth)
 
 // Police Interface API routes
 app.use("/api/police", Police)
+
+// Notification Interface API routes
+app.use("/api/notify", Notify)
 
 server.listen(7000, () => console.log(`Server running at http://localhost:7000`));

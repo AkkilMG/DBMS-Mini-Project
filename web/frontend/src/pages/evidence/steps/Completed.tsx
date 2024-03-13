@@ -4,11 +4,23 @@
  */
 
 import React from 'react';
+import Lottie from 'react-lottie';
+import comp from '../../../assets/completed.json';
 
 export const Completed = () => {
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: comp,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice'
+    }
+  };
   return (
-    <div className='flex flex-row items-center justify-center'>
-        <span className='flex text-3xl text-green-600'>Completed</span> 
+    <div className="flex items-center justify-center h-screen">
+      <div className="text-center">
+        <Lottie options={defaultOptions} height={512} width={512} />
+      </div>
     </div>
   );
 }

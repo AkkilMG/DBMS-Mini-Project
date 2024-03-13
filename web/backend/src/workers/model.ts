@@ -20,26 +20,17 @@ export interface UserRole {
 }
 
 export interface CaseReportingModel {
-    ReportID: string;
-    ReportDate: Date;
-    crimeType: number;
-    IncidentDate: Date;
+    CaseID: string;
+    ReportDate: any;
+    CrimeType: string;
+    IncidentDate: any;
     IncidentLoc: string;
     UserID: string;
     EvidenceDoc: string;
     EvidenceDesc: string;
     SuspeciousDocs: string;
     SuspeciousDesc: string;
-    Anonymity: boolean;
-}
-
-export interface CaseTrackingModel {
-    CaseID: string;
-    CurrentStatus: number;
-    userID: string;
-    DateOpen: Date;
-    DateClose?: Date;
-    ProcessDocs: Array<string>;
+    Anonymity: any;
 }
 
 export interface EvidenceModel {
@@ -53,19 +44,5 @@ export interface EvidenceModel {
     UploadEvidence: string;
     dateSubmitted: any;
     descEvidence: string;
-    anonymity: any;
-}
-
-export interface ChallanModel {
-    ChallanID: string;
-    Reason: string;
-    VHNo: string;
-    ViolationProof: Array<string>;
-    ViolationPlace: string;
-    IssueDate: Date;
-    PersonalID: string;
-    PoliceStation: string;
-    UserID: string;
-    Due: number;
-    CaseID: string;
+    Anonymity: any;
 }

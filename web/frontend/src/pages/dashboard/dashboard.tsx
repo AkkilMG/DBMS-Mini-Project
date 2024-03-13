@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DashboardMain } from './layers/main';
 import { DashboardSettings } from './layers/settings';
 
 const DashboardHeader: React.FC = () => {
   var [dropdown, setDropdown] = useState(false);
-  var [signout, setSignout] = useState(false);
+  const navigation = useNavigate();
   const getSignout = () => {
-    setSignout(true);
+    localStorage.removeItem('token');
+    navigation('/signin');
   }
   const workDropdown = () => {
     setDropdown(true);
@@ -149,7 +150,13 @@ const DashboardFooter: React.FC = () => {
 
 const Dashboard: React.FC = () => {
   var { path } = useParams();
+  
+  const navigate = useNavigate();
   var somewhere;
+  const token = localStorage.getItem('token');
+  if (token === null || token === undefined) {
+    navigate('/signin');
+  }
   if (path === undefined || path === "/" ) {
     somewhere = <DashboardMain />;
   } else if (path === "settings" || path === "setting" ) {

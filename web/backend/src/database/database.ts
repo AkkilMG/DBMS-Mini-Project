@@ -5,7 +5,7 @@
  */
 
 import mysql, { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
-import { UserModel, CaseReportingModel, CaseTrackingModel, EvidenceModel } from '../workers/model';
+import { UserModel, CaseReportingModel, EvidenceModel } from '../workers/model';
 import { encrypt, hash } from '../workers/crypt';
 import { createToken } from '../workers/auth';
 
@@ -120,88 +120,38 @@ export const Signin = async (data: any) => {
 
 /* ------- Police Handlers ------- */
 
-
-// Case Reporting
-export const CreateCaseReporting = async (UserID: string, data: CaseReportingModel) => {
-  try {
-    if (!data) return { success: false, message: "No data was passed!" }
-    data.ReportID = `UR${await hash()}`
-    data.UserID = UserID;
-    data.ReportDate = new Date();
-    const query = 'INSERT INTO CASE_REPORTING SET ?';
-    var db = await pool.getConnection();
-    var err, res = db.query(query, data)
-    db.release();
-    if (err) {
-      console.log(`database>CaseReporting>Query: ${err}`);
-      return { success: false, message: "Something went wrong!" }
-    }
-    return { success: true }
-  } catch (e) {
-    console.log(`database>CaseReporting>try: ${e.message}`);
-    return { success: false, message: "Something went wrong!" }
-  }
-};
-
-export const UpdateCaseReporting = async (keys: string[], values: string[], id: string) => {
-  try {
-    if (!keys) return { success: false, message: "No data was passed!" }
-    var set = `${keys[0]} = '${values[0]}' `;
-    for (var i=1; i<keys.length; i++) {
-      set += `, ${keys[i]} = '${values[i]}' `
-    }
-    const query = `UPDATE CASE_REPORTING SET ${set} WHERE ReportID = '${id}'`;
-    var db = await pool.getConnection();
-    var err, res = db.query(query)
-    db.release();
-    if (err) {
-      console.log(`database>CaseReporting>Query: ${err}`);
-      return { success: false, message: "Something went wrong!" }
-    }
-    return { success: true }
-  } catch (e) {
-    console.log(`database>CaseReporting>try: ${e.message}`);
-    return { success: false, message: "Something went wrong!" }
-  }
-};
-
-
-export const DeleteCaseReporting = async (data: CaseReportingModel) => {
-  try {
-    if (!data) return { success: false, message: "No data was passed!" }
-    // UPDATE EMPLOYEE SET DNO=1 WHERE EID=2;
-    const query = 'INSERT INTO CASE_REPORTING SET ?';
-    var db = await pool.getConnection();
-    var err, res = db.query(query, data)
-    db.release();
-    if (err) {
-      console.log(`database>CaseReporting>Query: ${err}`);
-      return { success: false, message: "Something went wrong!" }
-    }
-    return { success: true }
-  } catch (e) {
-    console.log(`database>CaseReporting>try: ${e.message}`);
-    return { success: false, message: "Something went wrong!" }
-  }
-};
-
-
 // Evidence
 export const CreateEvidence = async (data: EvidenceModel) => {
   try {
     if (!data) return { success: false, message: "No data was passed!" }
     data.EvidenceID = `EV${await hash()}`;
     data.dateSubmitted = new Date().toISOString().split('T')[0]
-    data.anonymity = data.anonymity ? 1 : 0;
-    const query = `INSERT INTO EVIDENCE (UserID, EvidenceID, CaseID, CaseDesc, EvidenceDesc, EvidenceDocs, EvidenceLoc, Submitted, anonymity) VALUES ( '${data.UserID}', '${data.EvidenceID}', ${(data.CaseID=='' || data.CaseID == null) ? `${data.CaseID}`: 'NULL'}, '${data.CaseDesc}', '${data.EvidenceDesc}',  '${data.EvidenceDocs}', '${data.EvidenceLoc}', '${data.dateSubmitted}', '${data.anonymity}')`;
+    data.Anonymity = data.Anonymity ? 1 : 0;
+    const query = `INSERT INTO EVIDENCE (UserID, EvidenceID, CaseID, CaseDesc, EvidenceDesc, EvidenceDocs, EvidenceLoc, Submitted, anonymity) VALUES ( '${data.UserID}', '${data.EvidenceID}', ${(data.CaseID=='' || data.CaseID == null) ? `${data.CaseID}`: 'NULL'}, '${data.CaseDesc}', '${data.EvidenceDesc}',  '${data.EvidenceDocs}', '${data.EvidenceLoc}', '${data.dateSubmitted}', '${data.Anonymity}')`;
     var db = await pool.getConnection();
     var [rows, fields] = await db.query(query, data)
     db.release();
-    if (Array.isArray(rows) && rows.length > 0) {
-      return { success: true }
-    } else {
-      return { success: false, message: "Something went wrong!" }
-    }
+    return { success: true }
+  } catch (e) {
+    console.log(`database>CreateEvidence>try: ${e.message}`);
+    return { success: false, message: "Something went wrong!" }
+  }
+};
+
+
+// Report
+export const CreateReport = async (data: CaseReportingModel) => {
+  try {
+    console.log(data);
+    if (!data) return { success: false, message: "No data was passed!" }
+    data.CaseID = `CA${await hash()}`;
+    data.ReportDate = new Date().toISOString().split('T')[0]
+    data.Anonymity = data.Anonymity ? 1 : 0;
+    const query = `INSERT INTO CASE_REPORTING (CaseID, ReportDate, CrimeType, IncidentDate, IncidentLoc, UserID, EvidenceDoc, EvidenceDesc, SuspeciousDocs, SuspeciousDesc, Anonymity) VALUES('${data.CaseID}', '${data.ReportDate}', '${data.CrimeType}', '${data.IncidentDate}', '${data.IncidentLoc}', '${data.UserID}', '${data.EvidenceDoc}', '${data.EvidenceDesc}', '${data.SuspeciousDocs}', '${data.SuspeciousDesc}', ${data.Anonymity})`;
+    var db = await pool.getConnection();
+    var [rows, fields] = await db.query(query, data)
+    db.release();
+    return { success: true }
   } catch (e) {
     console.log(`database>CreateEvidence>try: ${e.message}`);
     return { success: false, message: "Something went wrong!" }
