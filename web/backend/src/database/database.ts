@@ -261,3 +261,20 @@ export const ShowReport = async (CaseID: string) => {
   }
 };
 
+// Procedure based: GetRecentCases
+export const GetRecentCases = async () => {
+  try {
+    const query = `CALL GetRecentCases()`;
+    var db = await pool.getConnection();
+    var [rows, fields] = await db.query(query)
+    db.release();
+    if (Array.isArray(rows) && rows.length > 0) {
+      return { success: true, data: rows }
+    } else {
+      return { success: false, message: "Couldn't retrieve the report!" }
+    }
+  } catch (e) {
+    console.log(`database>ShowReport>try: ${e.message}`);
+    return { success: false, message: "Something went wrong!" }
+  }
+}

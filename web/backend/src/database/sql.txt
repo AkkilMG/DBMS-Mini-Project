@@ -64,7 +64,7 @@ CREATE TABLE EVIDENCE (
 );
 
 
--- Roles
+-- Roles Insertion
 
 INSERT INTO UserRole (RoleID, RoleName, Description, Permissions) 
 VALUES (1, 'User', 'Regular user role', 'read');
@@ -75,6 +75,23 @@ VALUES (2, 'Police Personal', 'Role for police personnel', 'read, write');
 INSERT INTO UserRole (RoleID, RoleName, Description, Permissions) 
 VALUES (3, 'Administrator', 'Role for administrators', 'read, write, manage');
 
+-- Users Insertion
+
+INSERT INTO USER (UserID, Username, Password, Email, PhoneNumber, AccStatus, RoleID) 
+VALUES ('USR12345678901234', 'john_doe', 'password123', 'john_doe@example.com', '123-456-7890', 0, 1);
+
+INSERT INTO USER (UserID, Username, Password, Email, PhoneNumber, AccStatus, RoleID) 
+VALUES ('USR98765432109876', 'jane_smith', 'qwerty123', 'jane_smith@example.com', '987-654-3210', 0, 1);
+
+INSERT INTO USER (UserID, Username, Password, Email, PhoneNumber, AccStatus, RoleID) 
+VALUES ('USR24681012141618', 'mike_jackson', 'ilovemusic', 'mike_jackson@example.com', '246-810-1214', 0, 1);
+
+INSERT INTO USER (UserID, Username, Password, Email, PhoneNumber, AccStatus, RoleID) 
+VALUES ('USR13579111315171', 'emily_wilson', 'p@ssw0rd', 'emily_wilson@example.com', '135-791-1131', 0, 1);
+
+INSERT INTO USER (UserID, Username, Password, Email, PhoneNumber, AccStatus, RoleID) 
+VALUES ('USR11121314151617', 'alex_turner', 'arcticmonkeys', 'alex_turner@example.com', '111-213-1415', 0, 1);
+
 
 
 -- TRIGGER
@@ -84,6 +101,43 @@ CREATE TRIGGER PENDING_LIST
 AFTER INSERT ON CASE_REPORTING FOR EACH ROW
 BEGIN
     INSERT INTO PENDING_CASES (CaseID) VALUES (NEW.CaseID);
+END //
+
+DELIMITER ;
+
+
+-- Procedure
+
+
+DELIMITER //
+
+CREATE PROCEDURE GetRecentCases()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE caseID VARCHAR(20);
+    DECLARE reportDate DATE;
+    DECLARE crimeType VARCHAR(40);
+    DECLARE incidentDate DATE;
+    DECLARE incidentLoc VARCHAR(50);
+    DECLARE userID VARCHAR(20);
+    DECLARE evidenceDoc VARCHAR(150);
+    DECLARE evidenceDesc VARCHAR(200);
+    DECLARE suspeciousDocs VARCHAR(150);
+    DECLARE suspeciousDesc VARCHAR(200);
+    DECLARE anonymity BOOLEAN;
+    
+    DECLARE cur CURSOR FOR
+        SELECT * FROM CASE_REPORTING ORDER BY ReportDate DESC LIMIT 10;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    OPEN cur;
+    read_loop: LOOP
+        FETCH cur INTO caseID, reportDate, crimeType, incidentDate, incidentLoc, userID, evidenceDoc, evidenceDesc, suspeciousDocs, suspeciousDesc, anonymity;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        SELECT caseID, reportDate, crimeType, incidentDate, incidentLoc, userID, evidenceDoc, evidenceDesc, suspeciousDocs, suspeciousDesc, anonymity;
+    END LOOP;
+    CLOSE cur;
 END //
 
 DELIMITER ;
