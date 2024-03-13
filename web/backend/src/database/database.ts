@@ -159,8 +159,6 @@ export const DeleteUser = async (UserID: string) => {
   }
 };
 
-
-
 // Show User
 export const ShowUser = async (UserID: string) => {
   try {
@@ -178,6 +176,34 @@ export const ShowUser = async (UserID: string) => {
       }
     } else {
       return { success: false, message: "Couldn't find user!" }
+    }
+  } catch (e) {
+    console.log(`database>ShowUser>try: ${e.message}`);
+    return { success: false, message: "Something went wrong!" }
+  }
+};
+
+// Show User
+export const ShowAllUser = async (UserID: string) => {
+  try {
+    var check = await SearchOneUser('UserID', UserID)
+    if (!check.success) return { success: false, message: "User is not registered!" }
+    if (Array.isArray(check.data) && check.data.length > 0) {
+      var data: any = check.data[0];
+      if (data.RoleID == 1) {
+        return { success: false, message: "You lack permission!" }
+      }
+      const query = `SELECT * FROM USER`;
+      var db = await pool.getConnection();
+      var [rows, fields] = await db.query(query);
+      db.release();
+      if (Array.isArray(rows) && rows.length > 0) {
+        return { success: true, data: rows }
+      } else {
+        return { success: false, message: "Couldn't retrieve the user!" }
+      }
+    } else {
+      return { success: false, message: "Couldn't find user with the permission!" }
     }
   } catch (e) {
     console.log(`database>ShowUser>try: ${e.message}`);
@@ -210,11 +236,30 @@ export const CreateEvidence = async (data: EvidenceModel) => {
 export const UpdateEvidence = async (EvidenceID: string, data: any) => {
   try {
     if (!EvidenceID) return { success: false, message: "No EvidenceID was passed!" }
-    const query = ``;
+    const query = `UPDATE EVIDENCE SET ${data.key} = ${data.value} WHERE EvidenceID = '${EvidenceID}'`;
     var db = await pool.getConnection();
-    var [rows, fields] = await db.query(query, data)
+    var [rows, fields] = await db.query(query)
     db.release();
     return { success: true }
+  } catch (e) {
+    console.log(`database>CreateEvidence>try: ${e.message}`);
+    return { success: false, message: "Something went wrong!" }
+  }
+};
+
+// Show Evidence
+export const ShowEvidence = async (EvidenceID: string) => {
+  try {
+    if (!EvidenceID) return { success: false, message: "No EvidenceID was passed!" }
+    const query = `SELECT * FROM EVIDENCE WHERE EvidenceID = '${EvidenceID}'`;
+    var db = await pool.getConnection();
+    var [rows, fields] = await db.query(query)
+    db.release();
+    if (Array.isArray(rows) && rows.length > 0) {
+      return { success: true, data: rows }
+    } else {
+      return { success: false, message: "Couldn't retrieve the user!" }
+    }
   } catch (e) {
     console.log(`database>CreateEvidence>try: ${e.message}`);
     return { success: false, message: "Something went wrong!" }
@@ -260,6 +305,35 @@ export const ShowReport = async (CaseID: string) => {
     return { success: false, message: "Something went wrong!" }
   }
 };
+
+export const ShowAllReport = async (UserID: string) => {
+  try {
+    if (!UserID) return { success: false, message: "No UserID was passed!" }
+    var check = await SearchOneUser('UserID', UserID)
+    if (!check.success) return { success: false, message: "User is not registered!" }
+    if (Array.isArray(check.data) && check.data.length > 0) {
+      var data: any = check.data[0];
+      if (data.RoleID == 1) {
+        return { success: false, message: "You lack permission!" }
+      }
+      const query = `SELECT * FROM CASE_REPORTING`;
+      var db = await pool.getConnection();
+      var [rows, fields] = await db.query(query)
+      db.release();
+      if (Array.isArray(rows) && rows.length > 0) {
+        return { success: true, data: rows[0] }
+      } else {
+        return { success: false, message: "Couldn't retrieve the report!" }
+      }
+    } else {
+      return { success: false, message: "Couldn't retrieve!" }
+    }
+  } catch (e) {
+    console.log(`database>ShowReport>try: ${e.message}`);
+    return { success: false, message: "Something went wrong!" }
+  }
+};
+
 
 // Procedure based: GetRecentCases
 export const GetRecentCases = async () => {

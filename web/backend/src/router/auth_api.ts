@@ -6,7 +6,7 @@
 
 import express from "express";
 import { UserModel } from "../workers/model";
-import { ChangePassword, Signin, Signup } from "../database/database";
+import { ChangePassword, DeleteUser, ShowAllUser, ShowUser, Signin, Signup } from "../database/database";
 import { verifyToken } from "../workers/auth";
 
 
@@ -38,6 +38,39 @@ router.post("/change-password", verifyToken, async(req, res) => {
     try {
         var data = req.body;
         var result = await ChangePassword(data.UserID, data.password);
+        return res.status(200).json(result);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({ success: false, message: e.message })
+    }
+});
+
+router.post("/delete-user", verifyToken, async(req, res) => {
+    try {
+        var data = req.body;
+        var result = await DeleteUser(data.UserID);
+        return res.status(200).json(result);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({ success: false, message: e.message })
+    }
+});
+
+router.post("/user", verifyToken, async(req, res) => {
+    try {
+        var data = req.body;
+        var result = await ShowUser(data.UserID);
+        return res.status(200).json(result);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({ success: false, message: e.message })
+    }
+});
+
+router.post("/users", verifyToken, async(req, res) => {
+    try {
+        var data = req.body;
+        var result = await ShowAllUser(data.UserID);
         return res.status(200).json(result);
     } catch (e) {
         console.log(e);

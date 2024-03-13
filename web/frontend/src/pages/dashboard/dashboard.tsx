@@ -6,6 +6,13 @@ import { DashboardSettings } from './layers/settings';
 const DashboardHeader: React.FC = () => {
   var [dropdown, setDropdown] = useState(false);
   const navigation = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token === null || token === undefined) {
+      navigation('/signin');
+    }
+  })
   const getSignout = () => {
     localStorage.removeItem('token');
     navigation('/signin');
