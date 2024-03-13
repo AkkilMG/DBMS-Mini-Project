@@ -118,6 +118,74 @@ export const Signin = async (data: any) => {
 };
 
 
+// Change Password
+export const ChangePassword = async (UserID: string, password: string) => {
+  try {
+    if (!password) return { success: false, message: "No password was passed!" }
+    var check = await SearchOneUser('UserID', UserID)
+    if (!check.success) return { success: false, message: "User is not registered!" }
+    if (Array.isArray(check.data) && check.data.length > 0) {
+      const query = `UPDATE USER SET Password = '${password}' WHERE UserID = '${UserID}'`;
+      var db = await pool.getConnection();
+      var [rows, fields] = await db.query(query);
+      db.release();
+      return { success: true }
+    } else {
+      return { success: false, message: "Something went wrong!" }
+    }
+  } catch (e) {
+    console.log(`database>ChangePassword>try: ${e.message}`);
+    return { success: false, message: "Something went wrong!" }
+  }
+};
+
+// Delete User
+export const DeleteUser = async (UserID: string) => {
+  try {
+    var check = await SearchOneUser('UserID', UserID)
+    if (!check.success) return { success: false, message: "User is not registered!" }
+    if (Array.isArray(check.data) && check.data.length > 0) {
+      const query = `DELETE FROM USER WHERE UserID = '${UserID}'`;
+      var db = await pool.getConnection();
+      var [rows, fields] = await db.query(query);
+      db.release();
+      return { success: true }
+    } else {
+      return { success: false, message: "Something went wrong!" }
+    }
+  } catch (e) {
+    console.log(`database>DeleteUser>try: ${e.message}`);
+    return { success: false, message: "Something went wrong!" }
+  }
+};
+
+
+
+// Show User
+export const ShowUser = async (UserID: string) => {
+  try {
+    var check = await SearchOneUser('UserID', UserID)
+    if (!check.success) return { success: false, message: "User is not registered!" }
+    if (Array.isArray(check.data) && check.data.length > 0) {
+      const query = `SELECT * FROM USER WHERE UserID = '${UserID}'`;
+      var db = await pool.getConnection();
+      var [rows, fields] = await db.query(query);
+      db.release();
+      if (Array.isArray(rows) && rows.length > 0) {
+        return { success: true, data: rows[0] }
+      } else {
+        return { success: false, message: "Couldn't retrieve the user!" }
+      }
+    } else {
+      return { success: false, message: "Couldn't find user!" }
+    }
+  } catch (e) {
+    console.log(`database>ShowUser>try: ${e.message}`);
+    return { success: false, message: "Something went wrong!" }
+  }
+};
+
+
 /* ------- Police Handlers ------- */
 
 // Evidence
@@ -138,6 +206,23 @@ export const CreateEvidence = async (data: EvidenceModel) => {
   }
 };
 
+// Update Evidence
+export const UpdateEvidence = async (EvidenceID: string, data: any) => {
+  try {
+    if (!EvidenceID) return { success: false, message: "No EvidenceID was passed!" }
+    const query = ``;
+    var db = await pool.getConnection();
+    var [rows, fields] = await db.query(query, data)
+    db.release();
+    return { success: true }
+  } catch (e) {
+    console.log(`database>CreateEvidence>try: ${e.message}`);
+    return { success: false, message: "Something went wrong!" }
+  }
+};
+
+
+/**  */
 
 // Report
 export const CreateReport = async (data: CaseReportingModel) => {
@@ -153,7 +238,25 @@ export const CreateReport = async (data: CaseReportingModel) => {
     db.release();
     return { success: true }
   } catch (e) {
-    console.log(`database>CreateEvidence>try: ${e.message}`);
+    console.log(`database>CreateReport>try: ${e.message}`);
+    return { success: false, message: "Something went wrong!" }
+  }
+};
+
+export const ShowReport = async (CaseID: string) => {
+  try {
+    if (!CaseID) return { success: false, message: "No CaseID was passed!" }
+    const query = `SELECT * FROM CASE_REPORTING WHERE CaseID = '${CaseID}'`;
+    var db = await pool.getConnection();
+    var [rows, fields] = await db.query(query)
+    db.release();
+    if (Array.isArray(rows) && rows.length > 0) {
+      return { success: true, data: rows[0] }
+    } else {
+      return { success: false, message: "Couldn't retrieve the report!" }
+    }
+  } catch (e) {
+    console.log(`database>ShowReport>try: ${e.message}`);
     return { success: false, message: "Something went wrong!" }
   }
 };
