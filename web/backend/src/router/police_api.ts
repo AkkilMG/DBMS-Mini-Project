@@ -5,27 +5,28 @@
  */
 
 import express from "express";
-import { UserModel } from "../workers/model";
-import { Signin, Signup } from "../database/database";
+import { verifyToken } from "../workers/auth";
+import { CreateEvidence } from "../database/database";
 
 
 const router = express.Router();
 
-router.post("/signup", async(req, res) => {
-    try {
-        var data: UserModel = req.body;
-        var result = await Signup(data);
-        return res.status(200).json(result);
-    } catch (e) {
-        console.log(e);
-        return res.status(500).json({ success: false, message: e.message })
-    }
-});
-
-router.post("/signin", async(req, res) => {
+router.post("/case-reporting", verifyToken, async(req, res) => {
     try {
         var data = req.body;
-        var result = await Signin(data);
+
+        return res.status(200).json({ success: true });
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({ success: false, message: e.message })
+    }
+});
+
+
+router.post("/evidence", verifyToken, async(req, res) => {
+    try {
+        var data = req.body;
+        var result = await CreateEvidence(data)
         return res.status(200).json(result);
     } catch (e) {
         console.log(e);
@@ -33,4 +34,4 @@ router.post("/signin", async(req, res) => {
     }
 });
 
-export const Auth = router;
+export const Police = router;

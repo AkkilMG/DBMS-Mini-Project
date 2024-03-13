@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import { Request, Response } from 'express';
 import { decrypt, encrypt } from "../workers/crypt";
 
+require('dotenv').config();
+
 export const verifyToken = async (req: Request, res: Response, next: () => void) => {
     const token = req.header('Authorization')?.split(' ')[1];
     if (!token) {
@@ -10,7 +12,7 @@ export const verifyToken = async (req: Request, res: Response, next: () => void)
     }
     try {
         const decoded = jwt.verify(token, process.env.KEY) as { id: string };
-        req.body.id = await decrypt(decoded.id);
+        req.body.UserID = await decrypt(decoded.id);
         next();
     } catch (error) {
         return res.status(401).json({ success: false, message: 'Authentication failed' });

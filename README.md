@@ -7,7 +7,6 @@
 - **Case Tracking**: Users can track the progress of their reported cases.
 - **Evidence Submission**: Users can upload and submit evidence related to their cases. After the case is submitted to court for transparency between the public.
 - **Notification System**: Users receive updates and notifications on case progress and changes on whatsapp and sms.
-- **Challan Tracking**: To track down the payment details, reason, proof, place, personal reported (id) and responsible police station.
 - **User Role**s: Different levels of access for citizens, police officers, and administrators.
 
 

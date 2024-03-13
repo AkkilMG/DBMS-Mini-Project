@@ -12,3 +12,12 @@ export const decrypt = async (ciphertext: string) => {
   const plaintext = bytes.toString(CryptoJS.enc.Utf8);
   return plaintext;
 }
+
+export const hash = async () => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 14; i++) {
+        result += characters.charAt(Math.floor(Math.random() * 14));
+    }
+    return result;
+}

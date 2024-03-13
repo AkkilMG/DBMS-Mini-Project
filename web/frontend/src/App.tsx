@@ -10,7 +10,6 @@ import { Reporting } from './pages/reporting/Reporting';
 import { ScreenLoading } from './components/common/lottie';
 import { ForgotForm } from './pages/auth/ForgotForm';
 import Dashboard from './pages/dashboard/dashboard';
-import { Challan } from './pages/challan/challan';
 import { Evidence } from './pages/evidence/Evidence';
 import { TrackCase } from './pages/track-case/track-case';
 import { Privacy } from './pages/policy/privacy';
@@ -60,7 +59,6 @@ export const App = () => {
       <Route path="/report" element={<Reporting />} />
       <Route path="/evidence" element={<Evidence />} />
       <Route path="/track-case" element={<TrackCase />} />
-      <Route path="/challan" element={<Challan />} />
       {/* Policy */}
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/terms" element={<Terms />} />

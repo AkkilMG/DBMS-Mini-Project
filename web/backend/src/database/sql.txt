@@ -1,59 +1,50 @@
 CREATE DATABASE POLICE_CONNECT;
 USE POLICE_CONNECT;
 
+
+-- Tables
+
+CREATE TABLE UserRole (
+    RoleID INTEGER,
+    RoleName VARCHAR(30),
+    Description VARCHAR(150),
+    Permissions VARCHAR(20),
+    PRIMARY KEY(RoleID)
+);
+
 CREATE TABLE USER (
 	UserID VARCHAR(20) NOT NULL,
     Username VARCHAR(15),
-    Password VARCHAR(20),
+    Password VARCHAR(75),
     Email VARCHAR(40),
     PhoneNumber VARCHAR(12) NOT NULL,
     WANumber VARCHAR(12),
-    AccStatus INTEGER,
-    Role Integer NOT NULL,
-    PRIMARY KEY(UserID)
+    AccStatus INTEGER DEFAULT 0,
+    RoleID Integer DEFAULT 0,
+    PRIMARY KEY(UserID),
+	FOREIGN KEY (RoleID) REFERENCES UserRole(RoleID)
 );
 
 CREATE TABLE CASE_REPORTING (
- ReportID VARCHAR(20) NOT NULL,
- ReportDate INTEGER,
- CrimeType INTEGER NOT NULL,
- IncidentDate DATE,
- IncidentLoc VARCHAR(20)  NOT NULL,
- UserID VARCHAR(20),
- EvidenceDoc VARCHAR(50) NOT NULL,
- EvidenceDesc VARCHAR(200) NOT NULL,
- SuspeciousDocs VARCHAR(50),
- SuspeciousDesc VARCHAR(200),
- Anonymity BOOLEAN NOT NULL,
- PRIMARY KEY(ReportID),
- FOREIGN KEY (UserID) REFERENCES USER(UserID)
-);
-
-CREATE TABLE CASE_TRACKING (
-	CaseID VARCHAR(20) NOT NULL,
-	CurrentStatus INTEGER NOT NULL,
-	UserID VARCHAR(20) NOT NULL,
-	DateOpen DATE,
-	DateClosed DATE,
-    ProcessDocs VARCHAR(50),
-	PRIMARY KEY(CaseID),
-	FOREIGN KEY (UserID) REFERENCES USER(UserID)
-);
-
-
-CREATE TABLE CHALLAN_TRACKING (
-	ChallanID VARCHAR(20) NOT NULL,
-    Reason VARCHAR(400),
-    VHNo VARCHAR(10),
-    ViolationProof VARCHAR(50),
-    ViolationPlace VARCHAR(20),
-    IssueDate DATE,
+    CaseID VARCHAR(20) NOT NULL,
+    ReportDate DATE,
+    CrimeType VARCHAR(40) NOT NULL,
+    IncidentDate DATE,
+    IncidentLoc VARCHAR(20)  NOT NULL,
     UserID VARCHAR(20),
-    PoliceStation VARCHAR(10),
-    Due INTEGER,
-    CaseID VARCHAR(20),
-    PRIMARY KEY(ChallanID),
-	FOREIGN KEY (UserID) REFERENCES USER(UserID)
+    EvidenceDoc VARCHAR(50) NOT NULL,
+    EvidenceDesc VARCHAR(200) NOT NULL,
+    SuspeciousDocs VARCHAR(50),
+    SuspeciousDesc VARCHAR(200),
+    Anonymity BOOLEAN NOT NULL,
+    PRIMARY KEY(CaseID),
+    FOREIGN KEY (UserID) REFERENCES USER(UserID)
+);
+
+CREATE TABLE PENDING_CASES (
+    CaseID VARCHAR(20) NOT NULL,
+    PRIMARY KEY(CaseID),
+    FOREIGN KEY (ReportID) REFERENCES CASE_REPORTING(ReportID)
 );
 
 CREATE TABLE EVIDENCE (
@@ -62,11 +53,37 @@ CREATE TABLE EVIDENCE (
     CaseID VARCHAR(20),
     CaseDesc VARCHAR(400),
     EvidenceDesc VARCHAR(400) NOT NULL,
-    EvidenceDocs VARCHAR(50),
-    EvidenceLoc VARCHAR(20),
+    EvidenceDocs VARCHAR(75),
+    EvidenceLoc VARCHAR(50),
     Submitted DATE,
 	Anonymity BOOLEAN NOT NULL,
     PRIMARY KEY(EvidenceID),
 	FOREIGN KEY (CaseID) REFERENCES CASE_TRACKING(CaseID),
 	FOREIGN KEY (UserID) REFERENCES USER(UserID)
 );
+
+
+-- Roles
+
+INSERT INTO UserRole (RoleID, RoleName, Description, Permissions) 
+VALUES (1, 'User', 'Regular user role', 'read');
+
+INSERT INTO UserRole (RoleID, RoleName, Description, Permissions) 
+VALUES (2, 'Police Personal', 'Role for police personnel', 'read, write');
+
+INSERT INTO UserRole (RoleID, RoleName, Description, Permissions) 
+VALUES (3, 'Administrator', 'Role for administrators', 'read, write, manage');
+
+
+
+-- TRIGGER
+DELIMITER //
+
+CREATE TRIGGER PENDING_LIST
+AFTER INSERT ON CASE_REPORTING FOR EACH ROW
+BEGIN
+    INSERT INTO PENDING_CASES (CaseID) VALUES (NEW.CaseID);
+END //
+
+DELIMITER ;
+

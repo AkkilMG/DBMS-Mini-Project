@@ -13,7 +13,7 @@ export const StepTwo: React.FC<Props>  = ({formData, setFormData}) => {
             <form>
                 <div className="mb-4">
                     <label className="block mb-2 font-bold text-gray-700 text-sl"> May I know a detailed description of the incident/crime? </label>
-                    <textarea value={formData.DescIncident} onChange={(e) => setFormData({...formData, DescIncident: e.target.value})} className="w-full px-3 py-2 leading-tight text-gray-700 border rounded-lg shadow appearance-none h-28 focus:border-indigo-500 focus:shadow-lg focus:outline-none focus:ring-2" id="DescIncident" />
+                    <textarea value={formData.EvidenceDesc} onChange={(e) => setFormData({...formData, EvidenceDesc: e.target.value})} className="w-full px-3 py-2 leading-tight text-gray-700 border rounded-lg shadow appearance-none h-28 focus:border-indigo-500 focus:shadow-lg focus:outline-none focus:ring-2" id="DescIncident" />
                 </div>
                 <div className="mb-6">
                     <span className="flex items-center justify-between mb-2 font-sans font-bold text-gray-700 text-sl">

@@ -10,12 +10,26 @@ import { StepThree } from './steps/StepThree';
 import { ScreenLoading } from '../../components/common/lottie';
 import { TiTick } from "react-icons/ti";
 import { Completed } from './steps/Completed';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export const Reporting = () => {
     const [loading, setLoading] = useState(true);
     const [complete, setComplete] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
-    const [formData, setFormData] = useState({});
+    const [error, setError] = useState<any>('');
+    const navigate = useNavigate();
+    const token = localStorage.getItem('token');
+    const [formData, setFormData] = useState<any>({
+        CrimeType: '',
+        IncidentDate: null,
+        IncidentLoc: '',
+        EvidenceDoc: '',
+        EvidenceDesc: '' ,
+        SuspeciousDocs: '',
+        SuspeciousDesc: '',
+        Anonymity: false
+    });
     const steps = ["Basic Info on Incident", "Details on Incident", "Evidence of the Incident"];
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -34,10 +48,36 @@ export const Reporting = () => {
             setCurrentStep(currentStep - 1);
         }
     };
-    const handleSubmit = () => {
+    
+    const handleSubmit = async () => {
+        try {
+            formData.IncidentLoc = formData.location.toString();
+        } catch (e) {}
         console.log(formData);
-        setComplete(true);
-        // Submit your formData
+        // try {
+        //     if (formData.CrimeType === '' || formData.IncidentDate === null || formData.IncidentLoc === '' || formData.EvidenceDoc === '' || formData.EvidenceDesc === '' || formData.SuspeciousDocs === '' || formData.SuspeciousDesc === '' || formData.Anonymity === '') {
+        //       setError('Please fill in all fields.');
+        //     } else {
+        //       const response = await axios.post(
+        //         'http://localhost:7000/api/police/case-reporting', formData, {
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 'Authorization': `Bearer ${token}`
+        //             }
+        //         }
+        //       );
+        //       console.log(response);
+        //       if (response.status === 200 && response.data.success) {
+        //         setComplete(true);
+        //       } else if (response.status === 200 && !response.data.success) {
+        //         setError(response.data.message);
+        //       } else {
+        //         setError("Unable to contact the server.")
+        //       }
+        //     }
+        // } catch (error) {
+        //     setError("Unable to contact the server.")
+        // }
     };
     const StepComponent = steps[currentStep];
     console.log(currentStep)
@@ -84,6 +124,7 @@ export const Reporting = () => {
                 </div>
             )}
             <div className="flex items-center justify-center flex-grow p-4 lg:w-2/3 ">
+                <>
                 {currentStep === 0 ? (
                     <StepOne formData={formData} setFormData={setFormData} />
                 ) : (
@@ -93,6 +134,15 @@ export const Reporting = () => {
                         <StepThree formData={formData} setFormData={setFormData} />
                     )
                 )}
+                
+                {error && (
+                <div className="items-center mb-6">
+                    <label className="block mt-0 ml-2 font-sans font-bold text-red-900 text-sl">
+                        {error}
+                    </label>
+                </div>
+                )}
+                </>
             </div>
             {!complete && (
                 <div className="relative flex justify-between w-1/5 px-10 mb-10">

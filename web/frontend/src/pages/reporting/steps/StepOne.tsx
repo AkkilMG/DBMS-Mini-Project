@@ -22,7 +22,7 @@ export const StepOne: React.FC<Props>  = ({formData, setFormData}) => {
                             <span className="flex items-center justify-between mb-2 font-sans font-bold text-gray-700 text-sl">
                             can you specify what type of incident/crime was it?
                             </span>
-                            <input required value={formData.firstName} onChange={(e) => setFormData({...formData, CrimeType: e.target.value})} className="w-full px-3 py-2 leading-tight text-gray-700 border rounded-lg shadow appearance-none h-14 focus:border-indigo-500 focus:shadow-lg focus:outline-none focus:ring-2" id="CrimeType" type="text" />
+                            <input required value={formData.CrimeType} onChange={(e) => setFormData({...formData, CrimeType: e.target.value})} className="w-full px-3 py-2 leading-tight text-gray-700 border rounded-lg shadow appearance-none h-14 focus:border-indigo-500 focus:shadow-lg focus:outline-none focus:ring-2" id="CrimeType" type="text" />
                         </>
                     )}
                 </div>

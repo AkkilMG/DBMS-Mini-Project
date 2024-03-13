@@ -10,8 +10,8 @@ import fs from 'fs';
 import http from 'http';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { App } from "./router/app_api";
-import { SelectData } from './database/database';
+import { Police } from "./router/police_api";
+import { Auth } from './router/auth_api';
 
 require('dotenv').config();
 
@@ -27,16 +27,19 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 app.set('trust proxy', true);
 
-// var server;
-// if (process.env.PRODUCTION==="true") {
-//     const privateKey = fs.readFileSync('/etc/letsencrypt/live/domain.com/privkey.pem', 'utf8');
-//     const certificate = fs.readFileSync('/etc/letsencrypt/live/domain.com/fullchain.pem', 'utf8');
-        
-//     const credentials = { key: privateKey, cert: certificate };
-//     server = https.createServer(credentials, app);
-// } else {
-//     server = http.createServer(app);
-// }
+app.use(cors({
+    origin: '*', // process.env.DOMAIN,
+    methods: 'GET, HEAD, PUT, PATCH, POST, DELETE',
+    credentials: true,
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'Access-Control-Allow-Origin', 'Access-Control-Allow-Methods', 'Access-Control-Allow-Headers'],
+}));
+
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*'); //process.env.DOMAIN);
+    res.header('Access-Control-Allow-Methods', 'GET, HEAD, PUT, PATCH, POST, DELETE'); 
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Origin, Access-Control-Allow-Methods, Access-Control-Allow-Headers'); 
+    next();
+});
 
 var server = http.createServer(app);
 
@@ -45,18 +48,10 @@ app.get("/", async(req, res) => {
     return
 })
 
-// test
-app.get("/test", async(req, res) => {
-    console.log(await SelectData());
-    res.status(200).json({msg: "Hi"})
-    return
-})
-
 // User Interface API routes
-app.use("/api/app", App)
+app.use("/api/auth", Auth)
 
-// User Interface API routes
-app.use("/api/auth", App)
-
+// Police Interface API routes
+app.use("/api/police", Police)
 
 server.listen(7000, () => console.log(`Server running at http://localhost:7000`));
