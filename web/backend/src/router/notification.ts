@@ -12,6 +12,7 @@ const router = express.Router();
 router.post("/reporting", verifyToken, async(req, res) => {
     try {
         var data = req.body;
+        
         return res.status(200).json({});
     } catch (e) {
         console.log(e);

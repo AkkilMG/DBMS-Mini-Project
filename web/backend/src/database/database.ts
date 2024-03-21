@@ -19,13 +19,6 @@ const pool = mysql.createPool({
   database: process.env.DATABASE
 });
 
-// pool.connect((err: any) => {
-//   if (err) {
-//     console.error('Error connecting to database:', err);
-//     return;
-//   }
-//   console.log('Connected to database');
-// });
 
 /* ------- User Registration and Authentication ------- */
 
@@ -36,7 +29,7 @@ export const SearchOneUser = async (key: string, value: string) => {
     var db = await pool.getConnection();
     var [rows, fields] = await db.query(query)
     db.release();
-    if (rows) {
+    if (Array.isArray(rows) && rows.length > 0) {
       return { success: true, data: rows }
     } else {
       return { success: false, message: "Couldn't find user!" }
@@ -78,11 +71,7 @@ export const Signup = async (data: UserModel) => {
     var db = await pool.getConnection();
     var [rows, fields] = await db.query(query, data);
     db.release();
-    if (rows) {
-      return { success: true }
-    } else {
-      return { success: false, message: "Couldn't find user!" }
-    }
+    return { success: true }
   } catch (e) {
     console.log(`database>Signup>try: ${e.message}`);
     return { success: false, message: "Something went wrong!" }
@@ -117,15 +106,31 @@ export const Signin = async (data: any) => {
   }
 };
 
-
-// Change Password
-export const ChangePassword = async (UserID: string, password: string) => {
+export const isAdmin = async (UserID: string) => {
   try {
-    if (!password) return { success: false, message: "No password was passed!" }
     var check = await SearchOneUser('UserID', UserID)
     if (!check.success) return { success: false, message: "User is not registered!" }
     if (Array.isArray(check.data) && check.data.length > 0) {
-      const query = `UPDATE USER SET Password = '${password}' WHERE UserID = '${UserID}'`;
+      var data: any = check.data[0];
+      if (data.RoleID > 1) {
+        return { success: true, RoleID: data.RoleID }
+      }
+    }
+    return { success: false }
+  } catch (e) {
+    console.log(`database>isAdmin>try: ${e.message}`);
+    return { success: false, message: "Something went wrong!" }
+  }
+}
+
+// Change Password
+export const ChangePassword = async (Email: string, password: string) => {
+  try {
+    if (!password) return { success: false, message: "No password was passed!" }
+    var check = await SearchOneUser('Email', Email)
+    if (!check.success) return { success: false, message: "User is not registered!" }
+    if (Array.isArray(check.data) && check.data.length > 0) {
+      const query = `UPDATE USER SET Password = '${password}' WHERE Email = '${Email}'`;
       var db = await pool.getConnection();
       var [rows, fields] = await db.query(query);
       db.release();
@@ -140,12 +145,12 @@ export const ChangePassword = async (UserID: string, password: string) => {
 };
 
 // Delete User
-export const DeleteUser = async (UserID: string) => {
+export const DeleteUser = async (UserID: string, DelUserID: string) => {
   try {
     var check = await SearchOneUser('UserID', UserID)
     if (!check.success) return { success: false, message: "User is not registered!" }
     if (Array.isArray(check.data) && check.data.length > 0) {
-      const query = `DELETE FROM USER WHERE UserID = '${UserID}'`;
+      const query = `DELETE FROM USER WHERE UserID = '${DelUserID}'`;
       var db = await pool.getConnection();
       var [rows, fields] = await db.query(query);
       db.release();
@@ -316,12 +321,12 @@ export const ShowAllReport = async (UserID: string) => {
       if (data.RoleID == 1) {
         return { success: false, message: "You lack permission!" }
       }
-      const query = `SELECT * FROM CASE_REPORTING`;
+      const query = `SELECT * FROM CASE_REPORTING INNER JOIN PENDING_CASES ON CASE_REPORTING.CASEID = PENDING_CASES.CASEID`;
       var db = await pool.getConnection();
       var [rows, fields] = await db.query(query)
       db.release();
       if (Array.isArray(rows) && rows.length > 0) {
-        return { success: true, data: rows[0] }
+        return { success: true, data: rows }
       } else {
         return { success: false, message: "Couldn't retrieve the report!" }
       }
@@ -334,18 +339,56 @@ export const ShowAllReport = async (UserID: string) => {
   }
 };
 
+// 
+export const Statistics = async (UserID: string) => {
+  try {
+    if (!UserID) return { success: false, message: "No UserID was passed!" }
+    var check = await SearchOneUser('UserID', UserID)
+    if (!check.success) return { success: false, message: "User is not registered!" }
+    if (Array.isArray(check.data) && check.data.length > 0) {
+      const query = `SELECT 
+      (SELECT COUNT(*) FROM case_reporting WHERE UserID = '${UserID}') AS case_count,
+      (SELECT COUNT(*) FROM evidence WHERE UserID = '${UserID}') AS evidence_count`;
+      var db = await pool.getConnection();
+      var [rows, fields] = await db.query(query)
+      db.release();
+      if (Array.isArray(rows) && rows.length > 0) {
+        console.log(rows)
+        var data: any = rows[0];
+        return { success: true, case_count: data['case_count'], evidence_count: data['evidence_count'] }
+      } else {
+        return { success: false, message: "Couldn't retrieve the report!" }
+      }
+    } else {
+      return { success: false, message: "Couldn't retrieve!" }
+    }
+  } catch (e) {
+    console.log(`database>ShowReport>try: ${e.message}`);
+    return { success: false, message: "Something went wrong!" }
+  }
+};
 
 // Procedure based: GetRecentCases
-export const GetRecentCases = async () => {
+export const GetRecentCases = async (UserID: string) => {
   try {
-    const query = `CALL GetRecentCases()`;
-    var db = await pool.getConnection();
-    var [rows, fields] = await db.query(query)
-    db.release();
-    if (Array.isArray(rows) && rows.length > 0) {
-      return { success: true, data: rows }
+    if (!UserID) return { success: false, message: "No UserID was passed!" }
+    var check = await SearchOneUser('UserID', UserID)
+    if (!check.success) return { success: false, message: "User is not registered!" }
+    if (Array.isArray(check.data) && check.data.length > 0) {
+      var data: any = check.data[0];
+      if (data.RoleID == 1) {
+        return { success: false, message: "You lack permission!" }
+      }const query = `CALL GetRecentCases()`;
+      var db = await pool.getConnection();
+      var [rows, fields] = await db.query(query)
+      db.release();
+      if (Array.isArray(rows) && rows.length > 0) {
+        return { success: true, data: rows.slice(0, 3) }
+      } else {
+        return { success: false, message: "Couldn't retrieve the recent cased!" }
+      }
     } else {
-      return { success: false, message: "Couldn't retrieve the report!" }
+      return { success: false, message: "Issue in recent cased!" }
     }
   } catch (e) {
     console.log(`database>ShowReport>try: ${e.message}`);

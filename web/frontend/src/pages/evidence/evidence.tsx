@@ -51,7 +51,7 @@ export const Evidence = () => {
             setFormData({...formData, EvidenceLoc: formData.location.toString()})
         } catch (e) {}
         try {
-            if (formData.CaseID === '' || formData.CaseDesc === '' || formData.EvidenceDesc === '' || formData.EvidenceDocs === '' || formData.EvidenceLoc === undefined) {
+            if (formData.CaseID === '' || formData.CaseDesc === '' || formData.EvidenceDesc === '' || formData.EvidenceDocs === '') {
               setError('Please fill in all fields.');
             } else {
               const response = await axios.post(
@@ -75,6 +75,13 @@ export const Evidence = () => {
             setError("Unable to contact the server.")
         }
     };
+    useEffect(() => {
+        if (complete) {
+           setTimeout(() => {
+                navigate("/")
+            }, 5000);
+        }
+    })
     return complete ? (
      <Completed />
     ) : (

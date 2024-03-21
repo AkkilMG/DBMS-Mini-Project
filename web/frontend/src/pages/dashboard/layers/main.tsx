@@ -3,14 +3,50 @@
  * @description: DBMS Project - Police Connect
  */
 
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
-export 
-const DashboardMain: React.FC = () => {
-  
+export const DashboardMain: React.FC = () => {
+  const token = localStorage.getItem("token");
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isOfficer, setIsOfficer] = useState(false)
+  const [casesList, setCasesList] = useState([])
+  const adminEnables = async () => {
+    try {
+      var response = await axios.get('http://localhost:7000/api/auth/check-admin', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (response.status === 200 && response.data.success) {
+      setIsAdmin(true);
+      if (response.data.RoleID === 3) {
+        setIsOfficer(true)
+      }
+      response = await axios.get('http://localhost:7000/api/auth/recent-cases', {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.status === 200 && response.data.success) {
+        var data = response.data.data;
+        console.log(data)
+        setCasesList(data);
+      }
+      console.log(casesList)
+    }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  useState(() => {
+    adminEnables()
+  })
   return (
     <>
-      <div className="p-4 sm:ml-64">
+      <div className="p-4 overflow-auto sm:ml-64">
         <div className="rounded-lg mt-14">
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="flex items-center p-4 bg-white border border-black rounded shadow-md">
@@ -67,13 +103,81 @@ const DashboardMain: React.FC = () => {
                   </div>
               </div>
             </div>
-            <div className="flex items-center justify-center h-48 mb-4 rounded bg-gray-50 dark:bg-gray-800">
+            {isAdmin && (
+            <div className='grid grid-cols-3 gap-6 py-4'>
+              {(casesList && casesList.length > 0) ? casesList.map((casex: any, index: any) => (
+                <div key={index} className="p-3 mt-6 text-gray-700 bg-white border border-black shadow-md sm:mt-0 rounded-xl w-96">
+                <div className="p-6">
+                    <div className="flex justify-between mt-3">
+                      <p className="text-lg font-bold">Case {index+1}</p>
+                      <a href={casex[0].incidentLoc} className="p-1 px-3 py-1 text-sm text-white bg-rose-400 rounded-xl">{casex[0].crimeType}</a>
+                    </div>
+                    <span className="text-gray-500 text-sl">{casex[0].incidentDate}</span>
+                    <br />
+                    <span className="text-gray-500 text-sl">{casex[0].evidenceDesc}</span>
+                    <br />
+                    <span className="text-gray-500 text-sl">{casex[0].suspeciousDesc}</span>
+                    <div className="flex justify-between mt-3 space-x-3">
+                      <a href={casex[0].evidenceDoc} className="flex items-center p-1 px-3 text-white bg-blue-500 rounded-lg">
+                        Evidence!
+                      </a>
+                      <a href={casex[0].suspeciousDocs} className="flex items-center p-1 px-3 text-white bg-green-500 rounded-lg">
+                        Suspecious!
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              )): (
+                <>
+                </>
+              )}
+            </div>
+            )}
+            {/* <div className="grid grid-cols-3 gap-4 mb-4">
+              <div className="flex items-center p-4 bg-white border border-black rounded shadow-md">
+                <div className="flex items-center justify-center flex-shrink-0 w-16 h-16 bg-green-200 rounded">
+                  <svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 64 80" className="w-12 h-12 text-green-700 fill-current" x="0px" y="0px">
+                    <path d="M7.9,6.52v51a5.71,5.71,0,0,0,5.7,5.7H50.4a5.71,5.71,0,0,0,5.7-5.7v-51A5.71,5.71,0,0,0,50.4.81H13.6A5.71,5.71,0,0,0,7.9,6.52ZM51.84,48.44,41.44,58.92H13.6a1.44,1.44,0,0,1-1.44-1.44v-51A1.44,1.44,0,0,1,13.6,5.08H50.4a1.44,1.44,0,0,1,1.44,1.44Z"/>
+                    <path d="M43,37.49a22.7,22.7,0,0,1-1-3.83,13,13,0,0,1,1.75-5.79,1.24,1.24,0,0,0,.06-1l-1-2.61a1.24,1.24,0,0,0-1.52-.76,11.18,11.18,0,0,1-3.16.43,8.51,8.51,0,0,1-4.64-1.11,1.64,1.64,0,0,0-.95-.3H31.43a1.64,1.64,0,0,0-.95.3,8.51,8.51,0,0,1-4.64,1.11,11.18,11.18,0,0,1-3.16-.43,1.24,1.24,0,0,0-1.52.76l-1,2.61a1.24,1.24,0,0,0,.06,1,13,13,0,0,1,1.8,5.78c0,1.27-2.05,6-2.05,8.69a9.52,9.52,0,0,0,4.63,8.16l5.68,3.4a3.3,3.3,0,0,0,3.37,0l5.68-3.4A9.5,9.5,0,0,0,44,42.35,19.64,19.64,0,0,0,43,37.49ZM32,46.66a8.2,8.2,0,1,1,8.2-8.2A8.21,8.21,0,0,1,32,46.66Z"/>
+                    <path d="M32,31.53a6.93,6.93,0,1,0,6.93,6.93A6.93,6.93,0,0,0,32,31.53ZM34.46,43l-2.25-1.18a.47.47,0,0,0-.42,0L29.54,43a.45.45,0,0,1-.65-.48l.43-2.5a.47.47,0,0,0-.13-.4l-1.82-1.77a.45.45,0,0,1,.25-.77l2.51-.37a.45.45,0,0,0,.34-.25l1.12-2.27a.45.45,0,0,1,.81,0l1.12,2.27a.45.45,0,0,0,.34.25l2.51.37a.45.45,0,0,1,.25.77l-1.82,1.77a.47.47,0,0,0-.13.4l.43,2.5A.45.45,0,0,1,34.46,43Z"/>
+                    <path d="M46.17,13.07H17.83a1.73,1.73,0,0,1,0-3.46H46.17a1.73,1.73,0,0,1,0,3.46Z"/>
+                    <path d="M46.17,19.53H17.83a1.73,1.73,0,1,1,0-3.46H46.17a1.73,1.73,0,1,1,0,3.46Z"/>
+                  </svg>
+                </div>
+                <div className="flex flex-col flex-grow ml-4">
+                  <span className="text-xl font-bold">50</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-500">Cases Solved</span>
+                    <span className="ml-2 text-sm font-semibold text-green-500">+2.6%</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center p-4 bg-white border border-black rounded shadow-md">
+                <div className="flex items-center justify-center flex-shrink-0 w-16 h-16 bg-red-200 rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 64 80" className="w-12 h-12 text-red-700 fill-current" x="0px" y="0px">
+                      <path d="M7.9,6.52v51a5.71,5.71,0,0,0,5.7,5.7H50.4a5.71,5.71,0,0,0,5.7-5.7v-51A5.71,5.71,0,0,0,50.4.81H13.6A5.71,5.71,0,0,0,7.9,6.52ZM51.84,48.44,41.44,58.92H13.6a1.44,1.44,0,0,1-1.44-1.44v-51A1.44,1.44,0,0,1,13.6,5.08H50.4a1.44,1.44,0,0,1,1.44,1.44Z"/>
+                      <path d="M43,37.49a22.7,22.7,0,0,1-1-3.83,13,13,0,0,1,1.75-5.79,1.24,1.24,0,0,0,.06-1l-1-2.61a1.24,1.24,0,0,0-1.52-.76,11.18,11.18,0,0,1-3.16.43,8.51,8.51,0,0,1-4.64-1.11,1.64,1.64,0,0,0-.95-.3H31.43a1.64,1.64,0,0,0-.95.3,8.51,8.51,0,0,1-4.64,1.11,11.18,11.18,0,0,1-3.16-.43,1.24,1.24,0,0,0-1.52.76l-1,2.61a1.24,1.24,0,0,0,.06,1,13,13,0,0,1,1.8,5.78c0,1.27-2.05,6-2.05,8.69a9.52,9.52,0,0,0,4.63,8.16l5.68,3.4a3.3,3.3,0,0,0,3.37,0l5.68-3.4A9.5,9.5,0,0,0,44,42.35,19.64,19.64,0,0,0,43,37.49ZM32,46.66a8.2,8.2,0,1,1,8.2-8.2A8.21,8.21,0,0,1,32,46.66Z"/>
+                      <path d="M32,31.53a6.93,6.93,0,1,0,6.93,6.93A6.93,6.93,0,0,0,32,31.53ZM34.46,43l-2.25-1.18a.47.47,0,0,0-.42,0L29.54,43a.45.45,0,0,1-.65-.48l.43-2.5a.47.47,0,0,0-.13-.4l-1.82-1.77a.45.45,0,0,1,.25-.77l2.51-.37a.45.45,0,0,0,.34-.25l1.12-2.27a.45.45,0,0,1,.81,0l1.12,2.27a.45.45,0,0,0,.34.25l2.51.37a.45.45,0,0,1,.25.77l-1.82,1.77a.47.47,0,0,0-.13.4l.43,2.5A.45.45,0,0,1,34.46,43Z"/>
+                      <path d="M46.17,13.07H17.83a1.73,1.73,0,0,1,0-3.46H46.17a1.73,1.73,0,0,1,0,3.46Z"/>
+                      <path d="M46.17,19.53H17.83a1.73,1.73,0,1,1,0-3.46H46.17a1.73,1.73,0,1,1,0,3.46Z"/>
+                    </svg>
+                </div>
+                <div className="flex flex-col flex-grow ml-4">
+                    <span className="text-xl font-bold">211</span>
+                    <div className="flex items-center justify-between">
+                        <span className="text-gray-500">Cases Reported</span>
+                        <span className="ml-2 text-sm font-semibold text-green-500">4.1%</span>
+                    </div>
+                </div>
+              </div>
+            </div> */}
+            {/* <div className="flex items-center justify-center h-48 mb-4 rounded bg-gray-50 dark:bg-gray-800">
               <p className="text-2xl text-gray-400 dark:text-gray-500">
                   <svg className="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 1v16M1 9h16"/>
                   </svg>
               </p>
-            </div>
+            </div> */}
         </div>
       </div>
     </>

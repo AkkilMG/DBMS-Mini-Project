@@ -55,7 +55,7 @@ export const Reporting = () => {
         } catch (e) {}
         console.log(formData);
         try {
-            if (formData.CrimeType === '' || formData.IncidentDate === '' || formData.IncidentLoc === '' || formData.EvidenceDoc === '' || formData.EvidenceDesc === '' || formData.SuspeciousDocs === '' || formData.SuspeciousDesc === '') {
+            if (formData.CrimeType === '' || formData.IncidentDate === '' || formData.EvidenceDoc === '' || formData.EvidenceDesc === '' || formData.SuspeciousDocs === '' || formData.SuspeciousDesc === '') {
               setError('Please fill in all fields.');
             } else {
               const response = await axios.post(
@@ -66,7 +66,6 @@ export const Reporting = () => {
                     }
                 }
               );
-              console.log(response);
               if (response.status === 200 && response.data.success) {
                 setComplete(true);
               } else if (response.status === 200 && !response.data.success) {
@@ -79,6 +78,14 @@ export const Reporting = () => {
             setError("Unable to contact the server.")
         }
     };
+    
+    useEffect(() => {
+        if (complete) {
+           setTimeout(() => {
+                navigate("/")
+            }, 5000);
+        }
+    })  
     const StepComponent = steps[currentStep];
     return complete ? (
      <Completed />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Routes, useParams } from 'react-router-dom';
+import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { Signin } from './pages/auth/signin';
 import { Signup } from './pages/auth/signup';
 import { Home } from './pages/home/Home';
@@ -14,12 +14,14 @@ import { Evidence } from './pages/evidence/Evidence';
 import { TrackCase } from './pages/track-case/track-case';
 import { Privacy } from './pages/policy/privacy';
 import { Terms } from './pages/policy/terms';
+import axios from 'axios';
 
 
 const Routing= () => {
   var { path } = useParams();
   // console.log(path);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       setLoading(false);
@@ -49,6 +51,32 @@ const Routing= () => {
 };
 
 export const App = () => {
+  const navigation = useNavigate();
+  const token = localStorage.getItem('token');
+
+  const logout = async () => {
+    try {
+      const response = await axios.get(
+        'http://localhost:7000/api/auth/check-token', {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        }
+      );
+      console.log(response);
+      if (response && !response.data.success) {
+        localStorage.removeItem('token');
+        navigation("/signin");
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    logout();
+  }, []);
   return (
     <Routes>
       {/* Authentication */}

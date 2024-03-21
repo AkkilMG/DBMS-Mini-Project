@@ -5,12 +5,28 @@
  */
 
 import express from "express";
+import jwt from "jsonwebtoken";
 import { UserModel } from "../workers/model";
-import { ChangePassword, DeleteUser, ShowAllUser, ShowUser, Signin, Signup } from "../database/database";
+import { ChangePassword, DeleteUser, GetRecentCases, ShowAllUser, ShowUser, Signin, Signup, Statistics, isAdmin } from "../database/database";
 import { verifyToken } from "../workers/auth";
+import { decrypt } from "../workers/crypt";
 
 
 const router = express.Router();
+
+router.get("/check-token", async(req, res) => {
+    const token = req.header('Authorization')?.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ success: false });
+    }
+    try {
+        const decoded = jwt.verify(token, process.env.KEY) as { id: string };
+        console.log(decoded)
+        return res.status(200).json({ success: true });
+    } catch (err) {
+        return res.status(500).json({ success: false });
+    }
+});
 
 router.post("/signup", async(req, res) => {
     try {
@@ -34,10 +50,10 @@ router.post("/signin", async(req, res) => {
     }
 });
 
-router.post("/change-password", verifyToken, async(req, res) => {
+router.post("/change-password", async(req, res) => {
     try {
         var data = req.body;
-        var result = await ChangePassword(data.UserID, data.password);
+        var result = await ChangePassword(data.Email, data.Password);
         return res.status(200).json(result);
     } catch (e) {
         console.log(e);
@@ -48,7 +64,7 @@ router.post("/change-password", verifyToken, async(req, res) => {
 router.post("/delete-user", verifyToken, async(req, res) => {
     try {
         var data = req.body;
-        var result = await DeleteUser(data.UserID);
+        var result = await DeleteUser(data.UserID, data.DelUserID);
         return res.status(200).json(result);
     } catch (e) {
         console.log(e);
@@ -56,7 +72,7 @@ router.post("/delete-user", verifyToken, async(req, res) => {
     }
 });
 
-router.post("/user", verifyToken, async(req, res) => {
+router.get("/user", verifyToken, async(req, res) => {
     try {
         var data = req.body;
         var result = await ShowUser(data.UserID);
@@ -67,7 +83,7 @@ router.post("/user", verifyToken, async(req, res) => {
     }
 });
 
-router.post("/users", verifyToken, async(req, res) => {
+router.get("/users", verifyToken, async(req, res) => {
     try {
         var data = req.body;
         var result = await ShowAllUser(data.UserID);
@@ -77,5 +93,38 @@ router.post("/users", verifyToken, async(req, res) => {
         return res.status(500).json({ success: false, message: e.message })
     }
 });
+
+router.get("/recent-cases", verifyToken, async(req, res) => {
+    try {
+        var data = req.body;
+        var result = await GetRecentCases(data.UserID);
+        return res.status(200).json(result);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({ success: false, message: e.message })
+    }
+});
+
+router.get("/check-admin", verifyToken, async(req, res) => {
+    try {
+        var data = req.body;
+        var result = await isAdmin(data.UserID);
+        return res.status(200).json(result);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({ success: false, message: e.message })
+    }
+})
+
+router.get("/statistics", verifyToken, async(req, res) => {
+    try {
+        var data = req.body;
+        var result = await Statistics(data.UserID);
+        return res.status(200).json(result);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({ success: false, message: e.message })
+    }
+})
 
 export const Auth = router;

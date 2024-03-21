@@ -33,7 +33,7 @@ router.post("/report", verifyToken, async(req, res) => {
     }
 });
 
-router.post("/reports", verifyToken, async(req, res) => {
+router.get("/reports", verifyToken, async(req, res) => {
     try {
         var data = req.body;
         var result = await ShowAllReport(data.UserID)

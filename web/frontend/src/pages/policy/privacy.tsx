@@ -18,21 +18,33 @@ export const Privacy = () => {
         <div className="flex-auto h-full m-10 ml-20 overflow-auto bg-opacity-75">
           <div className="max-w-3xl p-4 mx-auto">
             <h1 className="mb-4 text-3xl font-bold">Privacy Policy</h1>
-            <p className="text-lg leading-relaxed">
+            <p className="mb-4">
+              At Police Connect, we are committed to protecting your privacy. This Privacy Policy outlines how your personal information is collected, used, and shared when you use our application.
             </p>
-            <p className="mt-6 text-lg leading-relaxed">
+            <h2 className="mb-2 text-xl font-bold">Information We Collect</h2>
+            <p className="mb-4">
+              We collect information you provide directly to us when you use our application. This may include your name, contact information, case details, and any evidence you submit.
             </p>
-            <div className="mt-8">
-              <h2 className="mb-2 text-xl font-bold">Our Mission</h2>
-              <p className="text-lg leading-relaxed">
-              </p>
-            </div>
-            <div className="mt-8">
-              <h2 className="mb-2 text-xl font-bold">Our Vision</h2>
-              <p className="text-lg leading-relaxed">
-                
-              </p>
-            </div>
+            <h2 className="mb-2 text-xl font-bold">How We Use Your Information</h2>
+            <p className="mb-4">
+              We may use the information collected to investigate and resolve cases submitted by the public, communicate with users regarding their submissions, and improve our application.
+            </p>
+            <h2 className="mb-2 text-xl font-bold">Sharing Your Information</h2>
+            <p className="mb-4">
+              We may share your information with law enforcement agencies, government authorities, or third-party service providers who assist us in providing our services. We may also disclose information in response to legal requests or to protect our rights and interests.
+            </p>
+            <h2 className="mb-2 text-xl font-bold">Security</h2>
+            <p className="mb-4">
+              We take reasonable measures to protect your information from unauthorized access, use, or disclosure. However, no method of transmission over the Internet or electronic storage is 100% secure, and we cannot guarantee absolute security.
+            </p>
+            <h2 className="mb-2 text-xl font-bold">Changes to This Policy</h2>
+            <p className="mb-4">
+              We may update this Privacy Policy from time to time to reflect changes in our practices or legal requirements. We encourage you to review this page periodically for any updates.
+            </p>
+            <h2 className="mb-2 text-xl font-bold">Contact Us</h2>
+            <p className="mb-4">
+              If you have any questions or concerns about our Privacy Policy or our handling of your information, please contact us at privacy@policeconnect.com.
+            </p>
           </div>
         </div>
       </div>

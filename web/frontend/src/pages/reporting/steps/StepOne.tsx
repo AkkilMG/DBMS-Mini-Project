@@ -7,6 +7,7 @@ import React from 'react';
 import { Dropdown } from "../../../components/inputs/dropdown";
 
 export const StepOne: React.FC<Props>  = ({formData, setFormData}) => {
+    console.log(formData.CrimeType)
     var crimeType = ["Robbery", "Homicide", "Domestic Violence", "Kidnapping", "Child Labour", "Harassment", "Murder", "Assault", "Stalking", "Riot", "Fraud", "Cyber Crime", "Other"];
     return (
         <div className="w-full max-w-md">
